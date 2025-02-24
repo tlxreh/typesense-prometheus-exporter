@@ -30,7 +30,7 @@ for monitoring and alerting purposes. The exporter collects metrics from the Typ
    ./cmd/typesense-prometheus-exporter
    ```
 
-#### **Running in Docker**
+#### **Running on Docker**
 
 1. Deploy typesense-prometheus-exporter as a stand-alone stack with docker-compose:
 
@@ -55,6 +55,58 @@ services:
 2. Open http://localhost:8908 in your browser:
 
 ![image](https://github.com/user-attachments/assets/c2ccdfe3-1c37-49f0-acda-6b44950c2096)
+
+#### **Running on Kubernetes**
+
+0. If you are not having a Prometheus instance, deploy one with kube-prometheus-stack
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm install {RELEASE_NAME} prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+```
+
+> [!IMPORTANT]
+> Note down the `RELEASE_NAME` you've used, we are going to need it later.
+
+1. Install this binary as a [sidecar container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) 
+in the Pod(s) where your Typesense node(s) is running.
+
+2. Provision a `PodMonitor`, so this endpoint is picked up automatically from Prometheus as a target:
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ts-servicemonitor
+  namespace: default
+  labels:
+    release: { RELEASE_NAME }
+spec:
+  selector:
+    matchLabels:
+      { LABEL_OF_THE_STATEFULSET_PODS }
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      scheme: http
+```
+
+> [!CAUTION]
+> 1. Put the `PodMonitor` in any namespace you want (either the one hosting your workload or the one hosting Prometheus)
+     > but make sure `spec.namespaceSelector.matchNames` is pointing to the namespace your Typesense Pods are deployed at.
+> 2. Add an extra label in `metadata.Labels`, with key `release` and value the **release name** you provided when you deployed
+     > your **kube-prometheus-stack** Helm Chart. Without this label, Prometheus will **not** automatically pick up this endpoint as
+     > one of its target. It is not well documented in Prometheus documentation, but it's the _secret sauce_.
+> 3. Fill in the `spec.selector.matchLabels`, so they are matching the labels of the StatefulSet's Pods that are running
+     > the container images of the Typesense cluster.
+
+![image](https://github.com/user-attachments/assets/084f6fe9-2342-427f-9686-d63461507afa)
 
 #### Import Grafana Dashboards
 
