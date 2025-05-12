@@ -77,9 +77,9 @@ in the Pod(s) where your Typesense node(s) is running.
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
-  name: ts-servicemonitor
+  name: ts-podmonitor
   namespace: default
   labels:
     release: { RELEASE_NAME }
