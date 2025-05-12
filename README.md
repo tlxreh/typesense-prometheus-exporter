@@ -30,7 +30,7 @@ for monitoring and alerting purposes. The exporter collects metrics from the Typ
    ./cmd/typesense-prometheus-exporter
    ```
 
-#### **Running in Docker**
+#### **Running on Docker**
 
 1. Deploy typesense-prometheus-exporter as a stand-alone stack with docker-compose:
 
@@ -56,8 +56,7 @@ services:
 
 ![image](https://github.com/user-attachments/assets/c2ccdfe3-1c37-49f0-acda-6b44950c2096)
 
-
-#### **Running in Kubernetes**
+#### **Running on Kubernetes**
 
 0. If you are not having a Prometheus instance, deploy one with kube-prometheus-stack
 
@@ -71,84 +70,23 @@ helm install {RELEASE_NAME} prometheus-community/kube-prometheus-stack -n monito
 > [!IMPORTANT]
 > Note down the `RELEASE_NAME` you've used, we are going to need it later.
 
-1. Deploy the exporter as a `Deployment` in your Kubernetes cluster:
+1. Install this binary as a [sidecar container](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) 
+in the Pod(s) where your Typesense node(s) is running.
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-   name: ts-prometheus-exporter
-   namespace: default
-spec:
-   replicas: 1
-   selector:
-      matchLabels:
-         app: ts-prometheus-exporter
-   template:
-      metadata:
-         labels:
-            app: ts-prometheus-exporter
-      spec:
-         containers:
-            - name: typesense-prometheus-exporter
-              image: akyriako78/typesense-prometheus-exporter:0.1.7
-              env:
-                 - name: LOG_LEVEL
-                   value: "0"
-                 - name: TYPESENSE_API_KEY
-                   valueFrom:
-                      secretKeyRef:
-                         name: ts-api-key
-                         key: typesense-api-key
-                 - name: TYPESENSE_HOST
-                   value: ts-svc.default.svc.cluster.local
-                 - name: TYPESENSE_PORT
-                   value: "8108"
-                 - name: TYPESENSE_PROTOCOL
-                   value: "http"
-                 - name: TYPESENSE_CLUSTER
-                   value: ts
-              ports:
-                 - containerPort: 8908
-```
-
-2. Expose a `Service` for the exporter (Prometheus will scrape this endpoint)
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: ts-prometheus-exporter-svc
-  namespace: default
-  labels:
-    app: ts-prometheus-exporter
-spec:
-  selector:
-    app: ts-prometheus-exporter
-  ports:
-    - name: metrics
-      port: 8908
-      targetPort: 8908
-```
-
-> [!IMPORTANT]
-> If you set a custom `METRICS_PORT` remember to adjust `containerPort` in **Deployment** and `port` and `targetPort` in **Service**
-> accordingly. Check [Configuration](#configuration) for more info.
-
-3. Provision a `ServiceMonitor`, so this endpoint is picked up automatically from Prometheus as a target:
+2. Provision a `PodMonitor`, so this endpoint is picked up automatically from Prometheus as a target:
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
-  name: ts-servicemonitor
+  name: ts-podmonitor
   namespace: default
   labels:
-    release: {RELEASE_NAME}
+    release: { RELEASE_NAME }
 spec:
   selector:
     matchLabels:
-      app: ts-prometheus-exporter
+      { LABEL_OF_THE_STATEFULSET_PODS }
   namespaceSelector:
     matchNames:
       - default
@@ -157,15 +95,16 @@ spec:
       path: /metrics
       interval: 15s
       scheme: http
-  jobLabel: app
 ```
 
 > [!CAUTION]
-> 1. Put the `ServiceMonitor` in any namespace you want (either the one hosting your workload or the one hosting Prometheus)
-> but make sure `spec.namespaceSelector.matchNames` is pointing to the namespace your `Service` is deployed at.
-> 2. Add an extra label in `metadata.Labels`, with key `release` and value the the **release name** you provided when you deployed
-> your **kube-prometheus-stack** Helm Chart. Without this label, Prometheus will **not** automatically pick up this endpoint as 
-> one of its target. It is not well documented in Prometheus documentation, but it's the _secret sauce_.
+> 1. Put the `PodMonitor` in any namespace you want (either the one hosting your workload or the one hosting Prometheus)
+     > but make sure `spec.namespaceSelector.matchNames` is pointing to the namespace your Typesense Pods are deployed at.
+> 2. Add an extra label in `metadata.Labels`, with key `release` and value the **release name** you provided when you deployed
+     > your **kube-prometheus-stack** Helm Chart. Without this label, Prometheus will **not** automatically pick up this endpoint as
+     > one of its target. It is not well documented in Prometheus documentation, but it's the _secret sauce_.
+> 3. Fill in the `spec.selector.matchLabels`, so they are matching the labels of the StatefulSet's Pods that are running
+     > the container images of the Typesense cluster.
 
 ![image](https://github.com/user-attachments/assets/084f6fe9-2342-427f-9686-d63461507afa)
 
