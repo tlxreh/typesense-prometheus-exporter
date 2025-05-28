@@ -1,23 +1,30 @@
 # Configuration variables
 REGISTRY ?= $(shell docker info | sed '/Username:/!d;s/.* //')
 IMAGE_NAME ?= typesense-prometheus-exporter
-TAG ?= 0.1.7
+TAG ?= 0.1.8
 DOCKERFILE ?= Dockerfile
+PLATFORMS ?= linux/amd64,linux/arm64
+DOCKERX_BUILDER ?= typesense-prometheus-exporter-builder
 
 # Build binary
 build:
 	@echo "Building Go binary..."
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cmd/typesense-prometheus-exporter ./cmd
 
+docker-builder:
+	@echo "Creating buildx builder..."
+	docker buildx create --name ${DOCKERX_BUILDER} || true
+	docker buildx inspect --builder ${DOCKERX_BUILDER} --bootstrap
+
 # Build Docker image
-docker-build:
+docker-build: docker-builder
 	@echo "Building Docker image..."
-	docker build -t $(REGISTRY)/$(IMAGE_NAME):$(TAG) -f $(DOCKERFILE) .
+	docker buildx build --load --builder ${DOCKERX_BUILDER} -t $(REGISTRY)/$(IMAGE_NAME):$(TAG) -f $(DOCKERFILE) .
 
 # Push Docker image
-docker-push:
+docker-push: docker-builder
 	@echo "Pushing Docker image to registry..."
-	docker push $(REGISTRY)/$(IMAGE_NAME):$(TAG)
+	docker buildx build --push --builder ${DOCKERX_BUILDER} --platform ${PLATFORMS}  -t $(REGISTRY)/$(IMAGE_NAME):$(TAG) -f $(DOCKERFILE) .
 
 # Clean up
 clean:
