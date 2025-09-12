@@ -39,7 +39,7 @@ version: '3.8'
 
 services:
   typesense-prometheus-exporter:
-    image: akyriako78/typesense-prometheus-exporter:0.1.7
+    image: akyriako78/typesense-prometheus-exporter:0.1.9
     container_name: typesense-prometheus-exporter
     environment:
       LOG_LEVEL: "0"

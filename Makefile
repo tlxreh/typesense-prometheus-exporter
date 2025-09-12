@@ -1,7 +1,7 @@
 # Configuration variables
 REGISTRY ?= $(shell docker info | sed '/Username:/!d;s/.* //')
 IMAGE_NAME ?= typesense-prometheus-exporter
-TAG ?= 0.1.8
+TAG ?= 0.1.9
 DOCKERFILE ?= Dockerfile
 PLATFORMS ?= linux/amd64,linux/arm64,linux/s390x,linux/ppc64le
 DOCKERX_BUILDER ?= typesense-prometheus-exporter-builder

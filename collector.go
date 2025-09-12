@@ -7,7 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"regexp"
 	"strconv"
 	"sync"
 	"time"
@@ -151,10 +150,8 @@ func (c *TypesenseCollector) collect(target string, data map[string]interface{},
 					for endpoint, endpointVal := range endpoints {
 						if desc, ok := c.stats[key]; ok {
 							if val, ok := endpointVal.(float64); ok {
-								clean := cleanString(endpoint)
-
-								stat := prometheus.MustNewConstMetric(desc, prometheus.GaugeValue, val, c.cluster, clean)
-								c.logger.Debug(fmt.Sprintf("collected %s", target), "key", key, "endpoint", clean, "value", val)
+								stat := prometheus.MustNewConstMetric(desc, prometheus.GaugeValue, val, c.cluster, endpoint)
+								c.logger.Debug(fmt.Sprintf("collected %s", target), "key", key, "endpoint", endpoint, "value", val)
 
 								ch <- stat
 							}
@@ -173,12 +170,4 @@ func (c *TypesenseCollector) collect(target string, data map[string]interface{},
 			}
 		}
 	}
-}
-
-func cleanString(s string) string {
-	re := regexp.MustCompile(`^(GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD) `)
-	s = re.ReplaceAllString(s, "")
-
-	re = regexp.MustCompile(`_[0-9]+`)
-	return re.ReplaceAllString(s, "")
 }
