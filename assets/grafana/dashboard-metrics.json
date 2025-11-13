@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 29,
+  "id": 31,
   "links": [],
   "panels": [
     {
@@ -40,7 +40,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -78,26 +78,39 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "bytes"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Fragmentation Ratio"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 12,
+        "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
+          "calcs": ["last", "mean", "max"],
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -108,472 +121,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_system_cpu_active_percentage",
-          "legendFormat": "System CPU",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_cpu1_active_percentage",
-          "legendFormat": "CPU1",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_cpu2_active_percentage",
-          "legendFormat": "CPU2",
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_cpu3_active_percentage",
-          "legendFormat": "CPU3",
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_cpu4_active_percentage",
-          "legendFormat": "CPU4",
-          "refId": "E"
-        }
-      ],
-      "title": "System CPU Active Percentage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_memory_total_bytes",
-          "legendFormat": "Total Memory",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_memory_used_bytes",
-          "legendFormat": "Used Memory",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_memory_total_swap_bytes",
-          "legendFormat": "Total Swap",
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_memory_used_swap_bytes",
-          "legendFormat": "Used Swap",
-          "refId": "D"
-        }
-      ],
-      "title": "System Memory Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_disk_total_bytes",
-          "legendFormat": "Total Disk",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_system_disk_used_bytes",
-          "legendFormat": "Used Disk",
-          "refId": "B"
-        }
-      ],
-      "title": "System Disk Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": true,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "-typesense_metrics_system_network_received_bytes",
-          "legendFormat": "Received Bytes",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "typesense_metrics_system_network_sent_bytes",
-          "legendFormat": "Sent Bytes",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "System Network Traffic",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "typesense_metrics_memory_active_bytes",
+          "expr": "typesense_metrics_memory_active_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Active Memory",
           "refId": "A"
         },
@@ -582,7 +130,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_allocated_bytes",
+          "expr": "typesense_metrics_memory_allocated_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Allocated Memory",
           "refId": "B"
         },
@@ -591,7 +139,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_fragmentation_ratio",
+          "expr": "typesense_metrics_memory_fragmentation_ratio{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Fragmentation Ratio",
           "refId": "C"
         },
@@ -600,7 +148,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_mapped_bytes",
+          "expr": "typesense_metrics_memory_mapped_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Mapped Memory",
           "refId": "D"
         },
@@ -609,7 +157,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_metadata_bytes",
+          "expr": "typesense_metrics_memory_metadata_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Metadata Memory",
           "refId": "E"
         },
@@ -618,7 +166,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_resident_bytes",
+          "expr": "typesense_metrics_memory_resident_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Resident Memory",
           "refId": "F"
         },
@@ -627,7 +175,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "typesense_metrics_memory_retained_bytes",
+          "expr": "typesense_metrics_memory_retained_bytes{typesense_cluster=\"$typesense_cluster\"}",
           "legendFormat": "Retained Memory",
           "refId": "G"
         }
@@ -639,25 +187,31 @@
   "preload": false,
   "refresh": "auto",
   "schemaVersion": 40,
-  "tags": [],
+  "tags": ["typesense", "metrics"],
   "templating": {
     "list": [
       {
         "current": {
+          "selected": false,
           "text": "search-stg",
           "value": "search-stg"
         },
-        "definition": "label_values(typesense_cluster)",
-        "label": "typesense_cluster",
+        "definition": "label_values(typesense_metrics_memory_active_bytes, typesense_cluster)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": false,
         "name": "typesense_cluster",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(typesense_cluster)",
+          "query": "label_values(typesense_metrics_memory_active_bytes, typesense_cluster)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       }
     ]
@@ -669,7 +223,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Typesense Metrics",
-  "uid": "typesense-dashboard",
-  "version": 20,
+  "uid": "typesense-metrics-dashboard",
+  "version": 1,
   "weekStart": ""
 }
